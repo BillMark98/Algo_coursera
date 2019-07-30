@@ -1,26 +1,29 @@
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+public class Percolation {
 
-class Percolation {
+
+    // static variable
+    private static final boolean OPEN = true;
+
     // some private variable
-
-    private int[][] board;
-    private int points;
-    private int rowcolBound;
+    private boolean[][] board;
+    private final int rowcolBound;
     // the number of open sites
     private int openCount;
-    private WeightedQuickUnionUF uniUF;
+    // can be made final since uniUF is initialized only in the constructor
+    private final WeightedQuickUnionUF uniUF;
     private boolean[] connectedToBottom;
 
 
-    final static int Open = 1;
-    // final static int Full = 2;
-    final static int Closed = 0;
-
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
-        board = new int[n][n];
+        if (n < 1) {
+            throw new IllegalArgumentException("illegal size value");
+        }
+        board = new boolean[n][n];
         rowcolBound = n;
-        points = n * n;
+        int points = n * n;
         openCount = 0;
         // use only the top virtual node
         uniUF = new WeightedQuickUnionUF(points + 1);
@@ -30,25 +33,28 @@ class Percolation {
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         if (!isIndexValid(row, col)) {
-            throw new java.lang.IllegalArgumentException("illegal index");
+            throw new IllegalArgumentException("illegal index");
         }
-        board[row - 1][col - 1] = Open;
+        // allowing open to called on the opened site for more than one time
+        if (!board[row - 1][col - 1]) {
+            openCount++;
+        }
+        board[row - 1][col - 1] = OPEN;
         unionNeighbors(row, col);
-        openCount++;
     }
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         if (!isIndexValid(row, col)) {
-            throw new java.lang.IllegalArgumentException("illegal index");
+            throw new IllegalArgumentException("illegal index");
         }
-        return board[row - 1][col - 1] == Open;
+        return board[row - 1][col - 1] == OPEN;
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         if (!isIndexValid(row, col)) {
-            throw new java.lang.IllegalArgumentException("illegal index");
+            throw new IllegalArgumentException("illegal index");
         }
         // convert the (row,col) to index
 
@@ -68,23 +74,22 @@ class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
-
+        // test the percolates
+        Percolation percNew = new Percolation(4);
+        percNew.open(2, 2);
+        percNew.open(1, 2);
+        StdOut.println("percolates? " + percNew.percolates());
     }
 
     // test if the index is valid
     private boolean isIndexValid(int row, int col) {
-        if (row < 1 || row > rowcolBound || col < 1 || col > rowcolBound) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !(row < 1 || row > rowcolBound || col < 1 || col > rowcolBound);
     }
 
     // convert the (row,col) to a one dimensional coordinate
     private int xy2VectIndex(int row, int col) {
         if (!isIndexValid(row, col)) {
-            throw new java.lang.IllegalArgumentException("illegal index");
+            throw new IllegalArgumentException("illegal index");
         }
         int temp = (row - 1) * rowcolBound + (col - 1) + 1;
         return temp;
@@ -101,14 +106,15 @@ class Percolation {
         if (row == 1) {
             uniUF.union(coord, 0);
         }
-        else if (row == rowcolBound) {
+        if (row == rowcolBound) {
             // uniUF.union(coord, points + 1);
             // uniUF.union(coord + rowcolBound, points + 1);
-            connectedToBottom[coord] = true;
+            connectedToBottom[uniUF.find(coord)] = true;
+            connect2Bot = true;
         }
         if (row > 1) {
             if (isOpen(row - 1, col)) {
-                if (connectedToBottom[uniUF.find(coord - rowcolBound)] || row == rowcolBound) {
+                if (!connect2Bot && connectedToBottom[uniUF.find(coord - rowcolBound)]) {
                     connect2Bot = true;
                 }
                 uniUF.union(coord, coord - rowcolBound);

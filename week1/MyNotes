@@ -1,0 +1,23 @@
+1. import 仍然有时会自动删除
+在preferences editor general  auto import  insert imports on paste 改ask 为 all
+ok still not
+
+2. throw java.lang.IllegalArgumentException
+Error:(29, 19) java: cannot find symbol
+  symbol:   method IllegalArgumentException(java.lang.String)
+  location: class Percolation
+
+solution:
+throw new java.lang.IllegalArgumentException
+
+3. conditional logic can be removed
+
+if (row < 1 || row > rowcolBound || col < 1 || col > rowcolBound) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+改为
+return !(row < 1 || row > rowcolBound || col < 1 || col > rowcolBound);
