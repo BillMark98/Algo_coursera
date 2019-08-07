@@ -1,0 +1,4 @@
+randomized queue 中，deque 不单单是把选出来的index 弹出，
+设置null 应该记录空的位置，这样下次enqueue时可以填入，否则size会变得很大
+还会是amortized constant time 吗？
+
