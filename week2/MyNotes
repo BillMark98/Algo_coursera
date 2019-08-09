@@ -2,3 +2,15 @@ randomized queue 中，deque 不单单是把选出来的index 弹出，
 设置null 应该记录空的位置，这样下次enqueue时可以填入，否则size会变得很大
 还会是amortized constant time 吗？
 
+2.
+compile 通过
+但运行时
+/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home/bin/java "-javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=59176:/Applications/IntelliJ IDEA CE.app/Contents/bin" -Dfile.encoding=UTF-8 -classpath /Users/bill/Desktop/Algo_coursera/queues:/Users/bill/Desktop/Algo_coursera/queues/.lift/algs4.jar RandomizedQueue
+Exception in thread "main" java.lang.ClassCastException: java.base/java.lang.Object cannot be cast to java.base/[Ljava.lang.Object;
+	at RandomizedQueue.<init>(RandomizedQueue.java:23)
+	at RandomizedQueue.main(RandomizedQueue.java:118)
+
+code is
+array = (Item[]) new Object();
+
+should be array = (Item[]) new Object[1];
