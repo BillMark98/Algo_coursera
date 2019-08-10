@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private Item[] array;
-    private int NumberOfItems;
+    private int numberOfItems;
     // denote the number of places, where there weree an item(but deleted using deque)
 
     // private int NumberOfSlots;
@@ -25,12 +25,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-        return NumberOfItems == 0;
+        return numberOfItems == 0;
     }
 
     // return the number of items on the randomized queue
     public int size() {
-        return NumberOfItems;
+        return numberOfItems;
     }
 
     // add the item
@@ -38,10 +38,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (item == null) {
             throw new IllegalArgumentException("null argument");
         }
-        if (NumberOfItems == array.length) {
-            resize(2 * NumberOfItems);
+        if (numberOfItems == array.length) {
+            resize(2 * numberOfItems);
         }
-        array[NumberOfItems++] = item;
+        array[numberOfItems++] = item;
         // NumberOfSlots++;
     }
 
@@ -50,15 +50,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException("queue is empty");
         }
-        int index = StdRandom.uniform(NumberOfItems);
+        int index = StdRandom.uniform(numberOfItems);
         Item item = array[index];
         // swap the array[index] with the last item;
-        if (index != NumberOfItems - 1) {
-            swap(index, NumberOfItems - 1);
+        if (index != numberOfItems - 1) {
+            swap(index, numberOfItems - 1);
         }
-        array[NumberOfItems - 1] = null;
-        NumberOfItems--;
-        if (NumberOfItems > 0 && NumberOfItems == array.length / 4) {
+        array[numberOfItems - 1] = null;
+        numberOfItems--;
+        if (numberOfItems > 0 && numberOfItems == array.length / 4) {
             resize(array.length / 2);
         }
         return item;
@@ -69,7 +69,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException("queue is empty");
         }
-        int index = StdRandom.uniform(NumberOfItems);
+        int index = StdRandom.uniform(numberOfItems);
         Item item = array[index];
         // i guess dont need to swap the item
         // if (index != (NumberOfItems - 1)) {
@@ -84,19 +84,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class ArrayIterator implements Iterator<Item> {
-        private int[] indexArray;
+        private final int[] indexArray;
         private int count;
 
         public ArrayIterator() {
-            indexArray = new int[NumberOfItems];
-            for (int i = 0; i < NumberOfItems; i++) {
+            indexArray = new int[numberOfItems];
+            for (int i = 0; i < numberOfItems; i++) {
                 indexArray[i] = i;
             }
             StdRandom.shuffle(indexArray);
         }
 
         public boolean hasNext() {
-            return count < NumberOfItems;
+            return count < numberOfItems;
         }
 
         public void remove() {
@@ -148,7 +148,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resize(int newSize) {
         Item[] temp = (Item[]) new Object[newSize];
-        for (int i = 0; i < NumberOfItems; i++) {
+        for (int i = 0; i < numberOfItems; i++) {
             temp[i] = array[i];
         }
         // for (int i = 0, j = 0; i < NumberOfSlots; i++) {

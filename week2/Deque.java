@@ -12,7 +12,7 @@ public class Deque<Item> implements Iterable<Item> {
     // private variable
     private Node first;
     private Node last;
-    private int NumberOfNodes;
+    private int numberOfNodes;
 
     // define the Node class type
     private class Node {
@@ -28,12 +28,12 @@ public class Deque<Item> implements Iterable<Item> {
 
     // is the deque empty?
     public boolean isEmpty() {
-        return NumberOfNodes == 0;
+        return numberOfNodes == 0;
     }
 
     // return the number of items on the deque
     public int size() {
-        return NumberOfNodes;
+        return numberOfNodes;
     }
 
     // add the item to the front
@@ -51,7 +51,7 @@ public class Deque<Item> implements Iterable<Item> {
         else {
             oldfirst.previous = first;
         }
-        NumberOfNodes++;
+        numberOfNodes++;
     }
 
     // add the item to the back
@@ -69,7 +69,7 @@ public class Deque<Item> implements Iterable<Item> {
         else {
             oldlast.next = last;
         }
-        NumberOfNodes++;
+        numberOfNodes++;
     }
 
     // remove and return the item from the front
@@ -84,10 +84,14 @@ public class Deque<Item> implements Iterable<Item> {
             throw new java.util.NoSuchElementException("Deque is empty");
         }
         Item item = first.item;
+        // eliminate loitering
         first = first.next;
-        NumberOfNodes--;
+        numberOfNodes--;
         if (isEmpty()) {
             last = null;
+        }
+        else {
+            first.previous = null;
         }
         return item;
     }
@@ -98,10 +102,14 @@ public class Deque<Item> implements Iterable<Item> {
             throw new java.util.NoSuchElementException("Deque is empty");
         }
         Item item = last.item;
+        // eliminate loitering
         last = last.previous;
-        NumberOfNodes--;
+        numberOfNodes--;
         if (isEmpty()) {
             first = null;
+        }
+        else {
+            last.next = null;
         }
         return item;
     }
@@ -153,6 +161,102 @@ public class Deque<Item> implements Iterable<Item> {
         for (Integer i : deqInt) {
             StdOut.print(i + "  ");
         }
+
+        StdOut.println("Test a new deque");
+
+        // from the test
+        Deque<Integer> deque = new Deque<Integer>();
+        //{1}
+        deque.addFirst(1);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+        // deque.iterator();
+        // {1,2}
+        deque.addLast(2);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+        StdOut.println();
+        // { 2 }
+        deque.removeFirst();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 4,2}
+        deque.addFirst(4);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 2 }
+        deque.removeFirst();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 6 2 }
+        deque.addFirst(6);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 2 }
+        deque.removeFirst();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 8 2 }
+        deque.addFirst(8);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 8 2 9 }
+        deque.addLast(9);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        // { 8 2}
+        deque.removeLast();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        deque.removeLast();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        deque.removeFirst();
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+
+        StdOut.println("Empty: " + deque.isEmpty());
+        deque.addFirst(4);
+        for (Integer i : deque) {
+            StdOut.print(i + "  ");
+        }
+        StdOut.println();
+        deque.removeFirst();
+        StdOut.println("is empty: " + deque.isEmpty());
     }
+
 
 }
