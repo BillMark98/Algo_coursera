@@ -7,32 +7,36 @@
 import edu.princeton.cs.algs4.StdOut;
 
 public class setDelSuccessor {
-    private MyUnionUF[] unionArr;
+    // private MyUnionUF[] unionArr;
     private int[] set;
     private static final int deleted = -1;
     private static final int noDelNeighbour = -1;
     private static final int noSuccessor = -1;
+    private MyUnionUF delElemUnion;
 
     public setDelSuccessor(int n) {
         set = new int[n];
         for (int i = 0; i < n; i++) {
             set[i] = i;
         }
-        unionArr = new MyUnionUF[n];
+        // unionArr = new MyUnionUF[n];
+        delElemUnion = new MyUnionUF(n);
     }
 
     public void delete(int x) {
         delNeighour delN = deletedNeighbor(x);
         if (delN.neigh1 != noDelNeighbour) {
-            unionArr[delN.neigh1].union(delN.neigh1, x);
-            unionArr[x] = unionArr[delN.neigh1];
+            // unionArr[delN.neigh1].union(delN.neigh1, x);
+            // unionArr[x] = unionArr[delN.neigh1];
+            delElemUnion.union(x, delN.neigh1);
             if (delN.doubleDeleted) {
-                unionArr[delN.neigh1].union(x, delN.neigh2);
-                unionArr[delN.neigh2] = unionArr[delN.neigh1];
+                // unionArr[delN.neigh1].union(x, delN.neigh2);
+                // unionArr[delN.neigh2] = unionArr[delN.neigh1];
+                delElemUnion.union(delN.neigh1, delN.neigh2);
             }
         }
         else {
-            unionArr[x] = new MyUnionUF(set.length);
+            // unionArr[x] = new MyUnionUF(set.length);
         }
         set[x] = deleted;
     }
@@ -42,7 +46,8 @@ public class setDelSuccessor {
             return x;
         }
         else {
-            int temp = unionArr[x].findLarge(x) + 1;
+            // int temp = unionArr[x].findLarge(x) + 1;
+            int temp = delElemUnion.findLarge(x) + 1;
             if (temp < set.length) {
                 return temp;
             }
