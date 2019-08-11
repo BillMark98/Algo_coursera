@@ -2402,3 +2402,94 @@ Total: 67/67 tests passed!
 
 但是可以看到在 3 中问题的地方 此次test pass 说明之前确实是loitering的问题。
 现在所有code 改好后，test ok
+
+
+
+
+
+
+5. Interview questions
+
+
+1.Question 1
+Intersection of two sets. Given two arrays 𝚊[] and 𝚋[], each containing nn distinct 2D points in the plane, design a subquadratic algorithm to count the number of points that are contained both in array 𝚊[] and array 𝚋[].
+
+Note: these interview questions are ungraded and purely for your own enrichment. To get a hint, submit a solution.
+
+
+Solution:
+sort the two arrays.
+Then goes through every element of array a, while comparing that
+to the element of b (index from low to high) if one element of array a is also in b
+then push it into a queue. we continue with the next element of a and compare it with
+the current element of b
+
+The time it costs is bounded by sorting so O(nlogn)
+
+
+
+
+
+2.Question 2
+Permutation. Given two integer arrays of size nn, design a subquadratic algorithm to determine whether one is a permutation of the other. That is, do they contain exactly the same entries but, possibly, in a different order.
+
+Solution:
+
+
+sort the two integer arrays and compare whether the two sorted arrays have the same element 
+at the same index. if yes, then one is a permutation of the other. if not, then it's not.
+
+
+
+3.Question 3
+Dutch national flag. Given an array of nn buckets, each containing a red, white, or blue pebble, sort them by color. The allowed operations are:
+
+swap(i, j)swap(i,j): swap the pebble in bucket ii with the pebble in bucket jj.
+color(i)color(i): determine the color of the pebble in bucket ii.
+The performance requirements are as follows:
+
+At most nn calls to color()color().
+At most nn calls to swap()swap().
+Constant extra space.
+
+
+Solution:
+
+Suppose want the color to be red white blue. 
+maintain three variables, whitePos, redPos,bluePos, where redPos denotes the position, of actual the rightmost red pebble, the bluePos the left most blue pebble, and the whitePos the leftmost white pebble
+index begins at 1
+
+
+int redPos, whitePos, bluePos;
+for (int i = 1, j = n; i <= j; i++, j--) {
+if (color(i) == red) {
+redPos = i;
+if (whitePos != 0 && i > whitePos) {
+swap(i, whitePos);
+// r r r w w w r ..... b b b
+// so whitePos = 4, i = 7
+// now swap 4,7
+// r r r r w w w ... b b b
+// whitePos = 5
+whitePos++;
+}
+}
+if (color(i) == white) {
+// whitePos not set yet
+if (whitePos == 0) {
+whitePos = i;
+}
+}
+if (color(i) == blue) {
+if (bluePos == 0) {
+swap(i, j);
+bluePos = j;
+// minus i so that next round still consider the swapped to the front element
+i--;
+}
+else {
+swap(i, --bluePos);
+i--;
+}
+}
+}

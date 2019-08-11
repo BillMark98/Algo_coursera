@@ -21,3 +21,63 @@ if (row < 1 || row > rowcolBound || col < 1 || col > rowcolBound) {
 
 改为
 return !(row < 1 || row > rowcolBound || col < 1 || col > rowcolBound);
+
+
+
+
+
+3. Interview questions
+
+
+
+
+1.Question 1
+Social network connectivity. Given a social network containing nn members and a log file containing mm timestamps at which times pairs of members formed friendships, design an algorithm to determine the earliest time at which all members are connected (i.e., every member is a friend of a friend of a friend ... of a friend). Assume that the log file is sorted by timestamp and that friendship is an equivalence relation. The running time of your algorithm should be m \log nmlogn or better and use extra space proportional to nn.
+
+
+Solution:
+go through the sorted timestamp and maintain a union find (weighted quick union) of the n members. Each time a pair formed friendship connect these two. After each timestamp, pick a random member,
+and check the size of its corresponding subtree in the union find structure, if the size returned is n. Then all members are friends and we are done and return the timestamp. Else, we continue until we find such a timestamp.
+The correctness of the algo is that once all friends are connected, then they have the same root. and the size of the tree is n. This only happens when all members are friends.
+
+
+Question 2
+Union-find with specific canonical element. Add a method 𝚏𝚒𝚗𝚍() to the union-find data type so that 𝚏𝚒𝚗𝚍(𝚒) returns the largest element in the connected component containing ii. The operations, 𝚞𝚗𝚒𝚘𝚗(), 𝚌𝚘𝚗𝚗𝚎𝚌𝚝𝚎𝚍(), and 𝚏𝚒𝚗𝚍() should all take logarithmic time or better.
+
+For example, if one of the connected components is \{1, 2, 6, 9\}{1,2,6,9}, then the 𝚏𝚒𝚗𝚍() method should return 99 for each of the four elements in the connected components.
+
+Solution:
+
+maintain an array that saves the largest element of the subtree of each a[i].
+and update the element during connect(i,j)
+if(a[root(i)] > a[root(j)])
+   a[(root(j)] = a[root(i)]
+else
+ a[root(i)] = a[root(j)];
+
+
+
+
+Question 3
+Successor with delete. Given a set of nn integers S = \{ 0, 1, ... , n-1 \}S={0,1,...,n−1} and a sequence of requests of the following form:
+
+Remove xx from SS
+Find the successor of xx: the smallest yy in SS such that y \ge xy≥x.
+design a data type so that all operations (except construction) take logarithmic time or better in the worst case.
+
+
+
+
+Solution:   
+ maintain an array arrUnion, each points to a union find structure.
+once an element ele is deleted from the set S
+test whether its neighbour is / are deleted.  ( S[neighbor] == null)
+if so then connect it to the union find structure of its neighbor
+else
+create a new union find
+update the array arrUnion[ele] 
+to find the successor of x,
+use problem 2 find(x) + 1
+
+the idea is that, all the deleted consecutive elements form a union.  The successor is simply
+the largest of that union + 1
