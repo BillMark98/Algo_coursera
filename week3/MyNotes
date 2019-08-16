@@ -26,3 +26,30 @@
 
 可见有多个重复的
 确实只有test collinear 但是没有检查是否该segment 已经insert 进去
+
+但是改了之后
+还是有 NullPointerException
+在 BuildLine 中
+
+lineSegments = new LineSegment[numberOfLines];
+for (int i = 0; i < numberOfLines; i++) {
+            lineSegments[i] = pop();
+        }
+此处 numberOfLines == 2
+1st loop ok
+2nd loop 有问题
+因为之前 pop 时 减了numberOfLines
+所以此刻 numberOfLines == 1
+i == 1 所以跳过for loop 只初始化了第一个元素
+第二个仍未null
+而之后for each plot line 时， 第二个为null 没法plot  -> NullPointerException
+所以 改为
+lineSegments = new LineSegment[numberOfLines];
+        int lines = numberOfLines;
+        for (int i = 0; i < lines; i++) {
+            lineSegments[i] = pop();
+        }
+
+但之后，为了使 numberOfLines 始终表示save 多少lines，
+pop中 不改变numberOfLines
+所以仍为第一个版本

@@ -1,21 +1,22 @@
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
-
-import java.util.Arrays;
-
 /* *****************************************************************************
  *  Name:
  *  Date:
  *  Description:
  **************************************************************************** */
-public class BruteCollinearPoints {
-    Node first;
-    int numberOfLines;
-    // Point[] pointAll;
-    LineSegment[] lineSegments;
 
-    // finds all line segments containing 4 points
-    public BruteCollinearPoints(Point[] points) {
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
+import java.util.Arrays;
+
+public class FastCollinearPoints {
+    private Node first;
+    private int numberOfLines;
+    private LineSegment[] lineSegments;
+
+    public FastCollinearPoints(
+            Point[] points)     // finds all line segments containing 4 or more points
+    {
         if (points == null) {
             throw new IllegalArgumentException("points array null");
         }
@@ -58,7 +59,7 @@ public class BruteCollinearPoints {
             p.draw();
         }
         StdOut.println("Line built");
-        BruteCollinearPoints brt = new BruteCollinearPoints(arrP);
+        FastCollinearPoints brt = new FastCollinearPoints(arrP);
         LineSegment[] lines = brt.segments();
         for (LineSegment lineSeg : lines) {
             StdOut.println(lineSeg);
@@ -76,60 +77,28 @@ public class BruteCollinearPoints {
     }
 
     private void BuildListSegments(Point[] pointAll) {
-        // here rightEnd has the largest y value (this.compareTo(other) returns 1
-        Point leftEnd, rightEnd;
-        for (int i1 = 0; i1 < pointAll.length; i1++) {
-            for (int i2 = i1 + 1; i2 < pointAll.length; i2++) {
-                if (pointAll[i1].compareTo(pointAll[i2]) == 0) {
-                    continue;
+        // array too small impossible to have collinear four points
+        if (pointAll.length < 4) {
+            return;
+        }
+        for (Point p : pointAll) {
+            Arrays.sort(pointAll, p.slopeOrder());
+            if (p.slopeTo(pointAll[1]) == p.slopeTo(pointAll[3])) {
+                // collinear found find the furthest point
+                int j = 4;
+                double slope = p.slopeTo(pointAll[1]);
+                while (p.slopeTo(pointAll[j]) == slope) {
+                    j++;
                 }
-                else if (pointAll[i1].compareTo(pointAll[i2]) < 0) {
-                    leftEnd = pointAll[i1];
-                    rightEnd = pointAll[i2];
+                Point leftEnd = pointAll[1];
+                Point rightEnd = pointAll[--j];
+                if (p.compareTo(leftEnd) < 0) {
+                    leftEnd = p;
                 }
-                else {
-                    leftEnd = pointAll[i2];
-                    rightEnd = pointAll[i1];
+                else if (p.compareTo(rightEnd) > 0) {
+                    rightEnd = p;
                 }
-                for (int i3 = i2 + 1; i3 < pointAll.length; i3++) {
-                    if ((pointAll[i1].compareTo(pointAll[i3]) == 0) || (
-                            pointAll[i2].compareTo(pointAll[i3])
-                                    == 0)) {
-                        continue;
-                    }
-                    // if p1,p2,p3 not collinearr
-                    if (pointAll[i1].slopeTo(pointAll[i2]) != pointAll[i2].slopeTo(pointAll[i3])) {
-                        continue;
-                    }
-                    if (leftEnd.compareTo(pointAll[i3]) > 0) {
-                        leftEnd = pointAll[i3];
-                    }
-                    else if (rightEnd.compareTo(pointAll[i3]) < 0) {
-                        rightEnd = pointAll[i3];
-                    }
-                    for (int i4 = i3 + 1; i4 < pointAll.length; i4++) {
-                        if ((pointAll[i1].compareTo(pointAll[i4]) == 0) || (
-                                pointAll[i2].compareTo(pointAll[i4]) == 0)
-                                || (
-                                pointAll[i3].compareTo(pointAll[i4])
-                                        == 0)) {
-                            continue;
-                        }
-                        // already sure that p1,p2,p3 collinear
-                        // only have to test for example, p1 and p4 collinear
-                        if (pointAll[i1].slopeTo(pointAll[i4]) == pointAll[i1]
-                                .slopeTo(pointAll[i2])) {
-                            // line found
-                            if (leftEnd.compareTo(pointAll[i4]) > 0) {
-                                leftEnd = pointAll[i4];
-                            }
-                            else if (rightEnd.compareTo(pointAll[i4]) < 0) {
-                                rightEnd = pointAll[i4];
-                            }
-                            push(new LineSegment(leftEnd, rightEnd));
-                        }
-                    }
-                }
+                push(new LineSegment(leftEnd, rightEnd));
             }
         }
     }

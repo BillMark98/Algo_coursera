@@ -164,7 +164,14 @@ public class Point implements Comparable<Point> {
 
     public class BySlope implements Comparator<Point> {
         public int compare(Point a, Point b) {
-            return Double.compare(slopeTo(a), slopeTo(b));
+            int res = Double.compare(slopeTo(a), slopeTo(b));
+            if (res == 0) {
+                // for sorting in the Fstcollinear
+                return a.compareTo(b);
+            }
+            else {
+                return res;
+            }
         }
     }
 }
