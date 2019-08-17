@@ -4,10 +4,12 @@
  *  Description:
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class FastCollinearPoints {
     private Node first;
@@ -26,8 +28,8 @@ public class FastCollinearPoints {
         if (checkDuplicatePoint(points)) {
             throw new IllegalArgumentException("duplicate points");
         }
-        BuildListSegments(points);
-        BuildLineSegments();
+        buildListSegments(points);
+        buildLineSegments();
     }
 
     // the number of line segments
@@ -37,38 +39,74 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return lineSegments;
+        LineSegment[] lines = new LineSegment[lineSegments.length];
+        for (int i = 0; i < lineSegments.length; i++) {
+            lines[i] = lineSegments[i];
+        }
+        return lines;
     }
 
     public static void main(String[] args) {
-        StdDraw.setXscale(0, 100);
-        StdDraw.setYscale(0, 100);
-        StdDraw.setPenRadius(.01);
-        Point[] arrP = new Point[10];
-        arrP[0] = new Point(5, 10);
-        arrP[1] = new Point(10, 6);
-        arrP[2] = new Point(20, 30);
-        arrP[3] = new Point(40, 20);
-        arrP[4] = new Point(10, 10);
-        arrP[5] = new Point(40, 60);
-        arrP[6] = new Point(10, 15);
-        arrP[7] = new Point(6, 10);
-        arrP[8] = new Point(60, 90);
-        arrP[9] = new Point(100, 10);
-        for (Point p : arrP) {
+        // StdDraw.setXscale(0, 120);
+        // StdDraw.setYscale(0, 120);
+        // StdDraw.setPenRadius(.01);
+        // Point[] arrP = new Point[15];
+        // arrP[0] = new Point(5, 10);
+        // arrP[1] = new Point(10, 6);
+        // arrP[2] = new Point(20, 30);
+        // arrP[3] = new Point(40, 20);
+        // arrP[4] = new Point(10, 10);
+        // arrP[5] = new Point(40, 60);
+        // arrP[6] = new Point(10, 15);
+        // arrP[7] = new Point(6, 10);
+        // arrP[8] = new Point(60, 90);
+        // arrP[9] = new Point(100, 10);
+        // arrP[10] = new Point(30, 45);
+        // arrP[11] = new Point(50, 75);
+        // arrP[12] = new Point(10, 20);
+        // arrP[13] = new Point(10, 40);
+        // arrP[14] = new Point(50, 10);
+        // for (Point p : arrP) {
+        //     p.draw();
+        // }
+        // StdOut.println("Line built");
+        // FastCollinearPoints brt = new FastCollinearPoints(arrP);
+        // LineSegment[] lines = brt.segments();
+        // for (LineSegment lineSeg : lines) {
+        //     StdOut.println(lineSeg);
+        //     lineSeg.draw();
+        // }
+
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
             p.draw();
         }
-        StdOut.println("Line built");
-        FastCollinearPoints brt = new FastCollinearPoints(arrP);
-        LineSegment[] lines = brt.segments();
-        for (LineSegment lineSeg : lines) {
-            StdOut.println(lineSeg);
-            lineSeg.draw();
+        StdDraw.show();
+
+        // print and draw the line segments
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
         }
+        StdDraw.show();
 
     }
 
-    private void BuildLineSegments() {
+    private void buildLineSegments() {
         lineSegments = new LineSegment[numberOfLines];
         // int lines = numberOfLines;
         for (int i = 0; i < numberOfLines; i++) {
@@ -76,29 +114,112 @@ public class FastCollinearPoints {
         }
     }
 
-    private void BuildListSegments(Point[] pointAll) {
+    private void buildListSegments(Point[] pointAll) {
         // array too small impossible to have collinear four points
         if (pointAll.length < 4) {
             return;
         }
-        for (Point p : pointAll) {
-            Arrays.sort(pointAll, p.slopeOrder());
-            if (p.slopeTo(pointAll[1]) == p.slopeTo(pointAll[3])) {
-                // collinear found find the furthest point
-                int j = 4;
-                double slope = p.slopeTo(pointAll[1]);
-                while (p.slopeTo(pointAll[j]) == slope) {
+        MyPoint[] originArr = new MyPoint[pointAll.length];
+        MyPoint[] primitiveArr = new MyPoint[pointAll.length];
+        int[] pointVisited = new int[pointAll.length];
+        final int visited = 1;
+        for (int i = 0; i < pointAll.length; i++) {
+            originArr[i] = new MyPoint(pointAll[i], i);
+            primitiveArr[i] = new MyPoint(pointAll[i], i);
+        }
+        for (MyPoint pt : primitiveArr) {
+            // sort the originArr
+            Arrays.sort(originArr, pt.slopeOrder());
+            // Arrays.sort(pointAll, pt.p.slopeOrder());
+            // for (int i = 0; i < pointAll.length; i++) {
+            //     StdOut.println("i : " + i + "  point is : " + pointAll[i] + " slope to p : " + p
+            //             .slopeTo(pointAll[i]));
+            //     if (i < pointAll.length - 1) {
+            //         StdOut.println(
+            //                 "i and i + 1 compare: " + p
+            //                         .compareBySlope(pointAll[i], pointAll[i + 1]));
+            //     }
+            // }
+            pointVisited[pt.arrIndex] = visited;
+            int i = 1, j = 2;
+            while (i < pointAll.length && j < pointAll.length) {
+                if (pt.p.slopeTo(originArr[i].p) == pt.p.slopeTo(originArr[j].p)) {
+
+                    double slope = pt.p.slopeTo(originArr[i].p);
+
+                    if (pointVisited[originArr[i].arrIndex] == visited
+                            || pointVisited[originArr[j].arrIndex] == visited) {
+                        // if there is a collinear set then it's already considered so jump it
+                        j++;
+                        while (j < pointAll.length && pt.p.slopeTo(originArr[j].p) == slope) {
+                            j++;
+                        }
+                        if (j >= pointAll.length - 2) {
+                            break;
+                        }
+                        i = j;
+                        j++;
+                        continue;
+                    }
+                    // set the two ends
+                    // leftEnd has the smallest value rightEnd the largest value (in respect of the
+                    // compareTo method)
+                    Point leftEnd = (originArr[i].p.compareTo(originArr[j].p) < 0) ?
+                                    originArr[i].p :
+                                    originArr[j].p;
+                    Point rightEnd = (leftEnd == originArr[i].p) ? originArr[j].p : originArr[i].p;
+                    leftEnd = (leftEnd.compareTo(pt.p) < 0) ? leftEnd : pt.p;
+                    rightEnd = (rightEnd.compareTo(pt.p) < 0) ? pt.p : rightEnd;
+                    j++;
+                    int count = 2;
+                    // flag indicating whether the line already considered
+                    boolean lineVisited = false;
+                    while (j < pointAll.length && slope == pt.p.slopeTo(originArr[j].p)) {
+
+                        // test whether the line already considered
+                        if (pointVisited[originArr[j].arrIndex] == visited) {
+                            j++;
+                            lineVisited = true;
+                            while (j < pointAll.length && pt.p.slopeTo(originArr[j].p) == slope) {
+                                j++;
+                            }
+                            i = j;
+                            j++;
+                            break;
+
+                        }
+                        leftEnd = (leftEnd.compareTo(originArr[j].p) > 0) ? originArr[j].p :
+                                  leftEnd;
+                        rightEnd = (rightEnd.compareTo(originArr[j].p) < 0) ? originArr[j].p :
+                                   rightEnd;
+                        j++;
+                        count++;
+                    }
+                    // if a new collinear set of points found
+                    if (count >= 3) {
+                        // test duplicate
+                        if (!lineVisited) {
+                            LineSegment line = new LineSegment(leftEnd, rightEnd);
+                            push(line);
+                        }
+                        // else {
+                        //     line = null;
+                        // }
+                    }
+
+                    // since there could be maximal three points collinear
+                    // so dont need to consider that
+                    if (j >= pointAll.length - 2) {
+                        break;
+                    }
+                    i = j;
                     j++;
                 }
-                Point leftEnd = pointAll[1];
-                Point rightEnd = pointAll[--j];
-                if (p.compareTo(leftEnd) < 0) {
-                    leftEnd = p;
+                else {
+                    i++;
+                    j++;
                 }
-                else if (p.compareTo(rightEnd) > 0) {
-                    rightEnd = p;
-                }
-                push(new LineSegment(leftEnd, rightEnd));
+
             }
         }
     }
@@ -155,5 +276,49 @@ public class FastCollinearPoints {
 
     private boolean isEmpty() {
         return first == null;
+    }
+
+    private boolean isAlreadyInList(LineSegment line) {
+        Node oldfirst = first;
+        while (oldfirst != null) {
+            if (oldfirst.lines.toString().equals(line.toString())) {
+                return true;
+            }
+            oldfirst = oldfirst.next;
+        }
+        return false;
+    }
+
+
+    private class MyPoint {
+        public Point p;
+        public int arrIndex;
+
+        public MyPoint(Point pref, int index) {
+            p = pref;
+            arrIndex = index;
+        }
+
+        public Comparator<MyPoint> slopeOrder() {
+            return new BySlope();
+        }
+
+        private class BySlope implements Comparator<MyPoint> {
+            public int compare(MyPoint a, MyPoint b) {
+                if (a == null || b == null) {
+                    throw new NullPointerException("at least one of the arguments is null");
+                }
+                // int res = Double.compare(slopeTo(a), slopeTo(b));
+                // if (res == 0) {
+                //     // for sorting in the Fstcollinear
+                //     // but not allowed according to OJ
+                //     return a.compareTo(b);
+                // }
+                // else {
+                //     return res;
+                // }
+                return Double.compare(p.slopeTo(a.p), p.slopeTo(b.p));
+            }
+        }
     }
 }

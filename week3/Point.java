@@ -158,20 +158,36 @@ public class Point implements Comparable<Point> {
         }
     }
 
-    private boolean isValidCoord(int x, int y) {
-        return (x >= 0) && (x <= upperBound) && (y >= 0) && (y <= upperBound);
+    private boolean isValidCoord(int xcoord, int ycoord) {
+        return (xcoord >= 0) && (xcoord <= upperBound) && (ycoord >= 0) && (ycoord <= upperBound);
     }
 
-    public class BySlope implements Comparator<Point> {
+    private class BySlope implements Comparator<Point> {
         public int compare(Point a, Point b) {
-            int res = Double.compare(slopeTo(a), slopeTo(b));
-            if (res == 0) {
-                // for sorting in the Fstcollinear
-                return a.compareTo(b);
+            if (a == null || b == null) {
+                throw new NullPointerException("at least one of the arguments is null");
             }
-            else {
-                return res;
-            }
+            // int res = Double.compare(slopeTo(a), slopeTo(b));
+            // if (res == 0) {
+            //     // for sorting in the Fstcollinear
+            //     // but not allowed according to OJ
+            //     return a.compareTo(b);
+            // }
+            // else {
+            //     return res;
+            // }
+            return Double.compare(slopeTo(a), slopeTo(b));
         }
     }
+
+    // private int compareBySlope(Point a, Point b) {
+    //     int res = Double.compare(slopeTo(a), slopeTo(b));
+    //     if (res == 0) {
+    //         // for sorting in the Fstcollinear
+    //         return a.compareTo(b);
+    //     }
+    //     else {
+    //         return res;
+    //     }
+    // }
 }
