@@ -16,9 +16,10 @@ import java.util.Comparator;
 
 public class Point implements Comparable<Point> {
 
+    private static final int UPPERBOUND = 32767;
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
-    private static final int upperBound = 32767;
+
 
     /**
      * Initializes a new point.
@@ -133,7 +134,7 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
         StdDraw.setXscale(0, 50);
         StdDraw.setYscale(0, 50);
-        StdDraw.setPenRadius(.01);
+        StdDraw.setPenRadius(0.01);
         Point[] arrP = new Point[5];
         arrP[0] = new Point(5, 10);
         arrP[1] = new Point(10, 6);
@@ -159,7 +160,7 @@ public class Point implements Comparable<Point> {
     }
 
     private boolean isValidCoord(int xcoord, int ycoord) {
-        return (xcoord >= 0) && (xcoord <= upperBound) && (ycoord >= 0) && (ycoord <= upperBound);
+        return (xcoord >= 0) && (xcoord <= UPPERBOUND) && (ycoord >= 0) && (ycoord <= UPPERBOUND);
     }
 
     private class BySlope implements Comparator<Point> {

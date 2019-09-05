@@ -16,19 +16,30 @@ public class FastCollinearPoints {
     private int numberOfLines;
     private LineSegment[] lineSegments;
 
+
     public FastCollinearPoints(
             Point[] points)     // finds all line segments containing 4 or more points
     {
+
         if (points == null) {
             throw new IllegalArgumentException("points array null");
         }
         if (checkPointNull(points)) {
             throw new IllegalArgumentException("some points are null");
         }
-        if (checkDuplicatePoint(points)) {
+        // now be certain that all the elements are not null
+        // so can do the statement pointAll[i] = points[i]
+        Point[] pointAll = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            pointAll[i] = points[i];
+        }
+        // since checkDuplicatePoint will sort the array
+        // will use pointAll instead of points
+        if (checkDuplicatePoint(pointAll)) {
             throw new IllegalArgumentException("duplicate points");
         }
-        buildListSegments(points);
+
+        buildListSegments(pointAll);
         buildLineSegments();
     }
 
@@ -252,8 +263,8 @@ public class FastCollinearPoints {
     }
 
     private class Node {
-        LineSegment lines;
-        Node next;
+        public LineSegment lines;
+        public Node next;
     }
 
     private void push(LineSegment line) {
@@ -278,21 +289,21 @@ public class FastCollinearPoints {
         return first == null;
     }
 
-    private boolean isAlreadyInList(LineSegment line) {
-        Node oldfirst = first;
-        while (oldfirst != null) {
-            if (oldfirst.lines.toString().equals(line.toString())) {
-                return true;
-            }
-            oldfirst = oldfirst.next;
-        }
-        return false;
-    }
+    // private boolean isAlreadyInList(LineSegment line) {
+    //     Node oldfirst = first;
+    //     while (oldfirst != null) {
+    //         if (oldfirst.lines.toString().equals(line.toString())) {
+    //             return true;
+    //         }
+    //         oldfirst = oldfirst.next;
+    //     }
+    //     return false;
+    // }
 
 
-    private class MyPoint {
-        public Point p;
-        public int arrIndex;
+    private static class MyPoint {
+        public final Point p;
+        public final int arrIndex;
 
         public MyPoint(Point pref, int index) {
             p = pref;
@@ -306,7 +317,7 @@ public class FastCollinearPoints {
         private class BySlope implements Comparator<MyPoint> {
             public int compare(MyPoint a, MyPoint b) {
                 if (a == null || b == null) {
-                    throw new NullPointerException("at least one of the arguments is null");
+                    throw new IllegalArgumentException("at least one of the arguments is null");
                 }
                 // int res = Double.compare(slopeTo(a), slopeTo(b));
                 // if (res == 0) {

@@ -15,18 +15,24 @@ public class BruteCollinearPoints {
     // Point[] pointAll;
     private LineSegment[] lineSegments;
 
+
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
+
         if (points == null) {
             throw new IllegalArgumentException("points array null");
         }
         if (checkPointNull(points)) {
             throw new IllegalArgumentException("some points are null");
         }
-        if (checkDuplicatePoint(points)) {
+        Point[] pointArr = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            pointArr[i] = points[i];
+        }
+        if (checkDuplicatePoint(pointArr)) {
             throw new IllegalArgumentException("duplicate points");
         }
-        buildListSegments(points);
+        buildListSegments(pointArr);
         buildLineSegments();
     }
 
