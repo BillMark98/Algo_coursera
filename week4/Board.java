@@ -1,7 +1,7 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: Panwei Hu
+ *  Date: 2019/9/8
+ *  Description: week4 : 8puzzle
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.Queue;
@@ -389,3 +389,5 @@ public class Board {
         queue.enqueue(bo);
     }
 }
+
+

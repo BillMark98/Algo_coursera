@@ -1,7 +1,7 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name:  Panwei Hu
+ *  Date: 2019/9/8
+ *  Description:week4 8puzzle
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
@@ -19,6 +19,8 @@ public class Solver {
         if (initial == null) {
             throw new IllegalArgumentException("board is null");
         }
+
+        // one MinPQ version
 
         // MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
         // minPQ.insert(new SearchNode(initial));
@@ -205,3 +207,4 @@ public class Solver {
         // }
     }
 }
+
