@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class PointSET {
 
-    private SET<Point2D> pointSet;
+    private final SET<Point2D> pointSet;
     private int size;
 
     // construct an empty set of points
@@ -86,13 +86,13 @@ public class PointSET {
         if (isEmpty()) {
             return null;
         }
-        double dist = Double.MAX_VALUE;
+        double dist = Double.POSITIVE_INFINITY;
         Point2D nearPt = new Point2D(0, 0);
         for (Point2D pt : pointSet) {
             // taking root is unnecessary and time-consuming
-            double temp_dist = pt.distanceSquaredTo(p);
-            if (temp_dist < dist) {
-                dist = temp_dist;
+            double tempDist = pt.distanceSquaredTo(p);
+            if (tempDist < dist) {
+                dist = tempDist;
                 nearPt = pt;
             }
         }

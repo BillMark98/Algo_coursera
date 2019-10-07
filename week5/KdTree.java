@@ -52,10 +52,10 @@ public class KdTree {
         while (x != null) {
             int valueComp = x.comparePoint(p);
             if (valueComp < 0) {
-                x = x.leftNode;
+                x = x.rightNode;
             }
             else if (valueComp > 0) {
-                x = x.rightNode;
+                x = x.leftNode;
             }
             else {
                 return x.equalPoint(p);
@@ -93,7 +93,8 @@ public class KdTree {
         if (isEmpty()) {
             return null;
         }
-        double minDist = root.pt.distanceSquaredTo(p);
+        // double minDist = root.pt.distanceSquaredTo(p);
+        double minDist = Double.POSITIVE_INFINITY;
         Point2D nearNeighbor = nodeNearPoint(root, p, minDist);
         return new Point2D(nearNeighbor.x(), nearNeighbor.y());
     }
@@ -133,7 +134,7 @@ public class KdTree {
         // StdOut.println(neigh);
 
 
-        String filename = "circle10.txt";
+        String filename = "input10.txt";
         In in = new In(filename);
         KdTree kdtree = new KdTree();
         while (!in.isEmpty()) {
@@ -145,7 +146,7 @@ public class KdTree {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setPenRadius(0.01);
         kdtree.draw();
-        Point2D query = new Point2D(0.81, 0.3);
+        Point2D query = new Point2D(0.47, 0.75);
         StdDraw.setPenColor(StdDraw.BOOK_LIGHT_BLUE);
         StdDraw.setPenRadius(0.04);
         query.draw();
@@ -155,6 +156,28 @@ public class KdTree {
         StdDraw.setPenColor(StdDraw.BLUE);
         neigh.draw();
         StdDraw.show();
+
+
+        // check degeneracy
+        // KdTree kdtr = new KdTree();
+        // // kdtr.insert(new Point2D(0.375, 0.375));
+        // // kdtr.insert(new Point2D(0.875, 0.125));
+        // // kdtr.insert(new Point2D(0.125, 0.875));
+        // // kdtr.insert(new Point2D(1.0, 0.125));
+        // // StdOut.println("size : " + kdtr.size());
+        // // Point2D p = new Point2D(0.1, 0.1);
+        // // Point2D p1 = kdtr.nearest(p);
+        // // StdOut.println(p1);
+        //
+        //
+        // kdtr.insert(new Point2D(0.7, 0.2));
+        // kdtr.insert(new Point2D(0.5, 0.4));
+        // kdtr.insert(new Point2D(0.2, 0.3));
+        // kdtr.insert(new Point2D(0.4, 0.7));
+        // kdtr.insert(new Point2D(0.9, 0.6));
+        // // kdtr.draw();
+        // Point2D p = new Point2D(0.9, 0.6);
+        // StdOut.println(kdtr.contains(p));
     }
 
     private class Node {
@@ -188,6 +211,15 @@ public class KdTree {
                     return 1;
                 }
                 else {
+                    // has the same x coordinate
+                    // test the y coordinate
+                    double diffY = pt.y() - p.y();
+                    if (diffY < 0) {
+                        return -1;
+                    }
+                    else if (diffY > 0) {
+                        return 1;
+                    }
                     return 0;
                 }
             }
@@ -200,6 +232,13 @@ public class KdTree {
                     return 1;
                 }
                 else {
+                    double diffX = pt.x() - p.x();
+                    if (diffX < 0) {
+                        return -1;
+                    }
+                    else if (diffX > 0) {
+                        return 1;
+                    }
                     return 0;
                 }
             }
@@ -273,10 +312,10 @@ public class KdTree {
             return new Node(p, turnRoot);
         }
         if (nd.comparePoint(p) > 0) {
-            nd.leftNode = nodeInsert(nd.leftNode, p, turnRoot ^ 1);
+            nd.leftNode = nodeInsert(nd.leftNode, p, (turnRoot + 1) % 2);
         }
         else if (nd.comparePoint(p) < 0) {
-            nd.rightNode = nodeInsert(nd.rightNode, p, turnRoot ^ 1);
+            nd.rightNode = nodeInsert(nd.rightNode, p, (turnRoot + 1) % 2);
         }
         // else point already inserted
         return nd;
@@ -292,7 +331,7 @@ public class KdTree {
             nodeDraw(nd.rightNode, nd.pt.x(), globalXUp, globalYLow, globalYUp);
 
             StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.015);
+            StdDraw.setPenRadius(0.02);
             nd.pt.draw();
 
             StdDraw.setPenColor(StdDraw.RED);
@@ -306,7 +345,7 @@ public class KdTree {
 
 
             StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.015);
+            StdDraw.setPenRadius(0.02);
             nd.pt.draw();
 
 
@@ -371,7 +410,7 @@ public class KdTree {
                 nearNeighbor = pLeftTemp;
             }
             double selfDist = nd.pt.distanceSquaredTo(p);
-            if (selfDist < minDist) {
+            if (selfDist <= minDist) {
                 nearNeighbor = nd.pt;
             }
             return nearNeighbor;
@@ -394,7 +433,7 @@ public class KdTree {
                 nearNeighbor = pRightTemp;
             }
             double selfDist = nd.pt.distanceSquaredTo(p);
-            if (selfDist < minDist) {
+            if (selfDist <= minDist) {
                 nearNeighbor = nd.pt;
             }
             return nearNeighbor;
