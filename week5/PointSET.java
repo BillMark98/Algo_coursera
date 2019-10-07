@@ -7,6 +7,8 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 
@@ -84,12 +86,11 @@ public class PointSET {
         if (isEmpty()) {
             return null;
         }
-        ArrayList<Point2D> pointsArr = new ArrayList<>();
         double dist = Double.MAX_VALUE;
-        double temp_dist;
         Point2D nearPt = new Point2D(0, 0);
         for (Point2D pt : pointSet) {
-            temp_dist = pt.distanceTo(p);
+            // taking root is unnecessary and time-consuming
+            double temp_dist = pt.distanceSquaredTo(p);
             if (temp_dist < dist) {
                 dist = temp_dist;
                 nearPt = pt;
@@ -100,6 +101,36 @@ public class PointSET {
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
+        PointSET ps = new PointSET();
+        ps.insert(new Point2D(0.1, 0.2));
+        ps.insert(new Point2D(0.3, 0.6));
+        ps.insert(new Point2D(0.5, 0.7));
+        ps.insert(new Point2D(0.1, 0.2));
+        StdOut.println("the size is: " + ps.size());
 
+        StdDraw.setXscale(0, 1);
+        StdDraw.setYscale(0, 1);
+        StdDraw.setPenRadius(0.01);
+        ps.draw();
+
+        RectHV rect = new RectHV(0, 0, 0.25, 0.4);
+
+        rect.draw();
+        Iterable<Point2D> iter = ps.range(rect);
+        StdOut.println("the points in the rect are: ");
+        StdDraw.setPenColor(StdDraw.RED);
+        for (Point2D p : iter) {
+            StdOut.println(p);
+        }
+
+        Point2D pt = new Point2D(0.4, 0.5);
+        StdDraw.setPenColor(StdDraw.GREEN);
+        pt.draw();
+
+        Point2D neigh = ps.nearest(pt);
+        StdDraw.setPenColor(StdDraw.BLUE);
+        neigh.draw();
+        StdOut.println("the nearest point is : ");
+        StdOut.println(neigh);
     }
 }

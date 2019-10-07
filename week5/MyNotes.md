@@ -13,3 +13,6 @@ Point2D nearPt = new Point2D(0, 0);
 
 ```  
 since the variable `nearPt` has to be initialized.
+
+
+* How to go the definitions of a function?
