@@ -93,8 +93,8 @@ public class KdTree {
         if (isEmpty()) {
             return null;
         }
-        // double minDist = root.pt.distanceSquaredTo(p);
-        double minDist = Double.POSITIVE_INFINITY;
+        double minDist = root.pt.distanceSquaredTo(p);
+        // double minDist = Double.POSITIVE_INFINITY;
         Point2D nearNeighbor = nodeNearPoint(root, p, minDist);
         return new Point2D(nearNeighbor.x(), nearNeighbor.y());
     }
@@ -137,25 +137,37 @@ public class KdTree {
         String filename = "input10.txt";
         In in = new In(filename);
         KdTree kdtree = new KdTree();
+        // kdtree.insert(new Point2D(0.1, 0.1));
         while (!in.isEmpty()) {
             double x = in.readDouble();
             double y = in.readDouble();
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
         }
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setPenRadius(0.01);
-        kdtree.draw();
-        Point2D query = new Point2D(0.47, 0.75);
-        StdDraw.setPenColor(StdDraw.BOOK_LIGHT_BLUE);
-        StdDraw.setPenRadius(0.04);
-        query.draw();
+        // StdDraw.setPenColor(StdDraw.BLACK);
+        // StdDraw.setPenRadius(0.01);
+        // kdtree.draw();
+
+        // should return (0.32,0.708)
+        // Point2D query = new Point2D(0.34, 0.8);
+
+        // should return (0.372,0.497)
+        // Point2D query = new Point2D(0.5, 0.56);
+
+        // should return (0.226,0.577)
+        // Point2D query = new Point2D(0.25, 0.53);
+
+        // should return (0.226,0.577)
+        Point2D query = new Point2D(0.226, 0.581);
+        // StdDraw.setPenColor(StdDraw.BOOK_LIGHT_BLUE);
+        // StdDraw.setPenRadius(0.04);
+        // query.draw();
 
         Point2D neigh = kdtree.nearest(query);
         StdOut.println("neigh: " + neigh);
-        StdDraw.setPenColor(StdDraw.BLUE);
-        neigh.draw();
-        StdDraw.show();
+        // StdDraw.setPenColor(StdDraw.BLUE);
+        // neigh.draw();
+        // StdDraw.show();
 
 
         // check degeneracy
@@ -331,11 +343,11 @@ public class KdTree {
             nodeDraw(nd.rightNode, nd.pt.x(), globalXUp, globalYLow, globalYUp);
 
             StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.02);
+            // StdDraw.setPenRadius(0.02);
             nd.pt.draw();
 
             StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.setPenRadius(0.01);
+            // StdDraw.setPenRadius(0.01);
             double xval = nd.pt.x();
             StdDraw.line(xval, globalYLow, xval, globalYUp);
         }
@@ -345,12 +357,12 @@ public class KdTree {
 
 
             StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.02);
+            // StdDraw.setPenRadius(0.02);
             nd.pt.draw();
 
 
             StdDraw.setPenColor(StdDraw.BLUE);
-            StdDraw.setPenRadius(0.01);
+            // StdDraw.setPenRadius(0.01);
             double yval = nd.pt.y();
             StdDraw.line(globalXLow, yval, globalXUp, yval);
         }
@@ -389,27 +401,40 @@ public class KdTree {
         if (nd == null) {
             return null;
         }
+        double possibleDist = nd.possibleMinDist(p);
+        double selfDist = nd.pt.distanceSquaredTo(p);
         // minDist means the closest square Dist found so far
         int pos = nd.comparePoint(p);
         Point2D nearNeighbor = null;
+        if (selfDist <= minDist) {
+            minDist = selfDist;
+            nearNeighbor = nd.pt;
+        }
         if (pos <= 0) {
             Point2D pRightTemp = nodeNearPoint(nd.rightNode, p, minDist);
             if (pRightTemp != null) {
                 double tempDist = pRightTemp.distanceSquaredTo(p);
-                double possibleDist = nd.possibleMinDist(p);
                 if (tempDist < possibleDist) {
+                    // dont need to consider the other subtree
                     return pRightTemp;
                 }
                 // update the minDist
                 minDist = tempDist;
                 nearNeighbor = pRightTemp;
             }
+            else if (possibleDist > minDist) {
+                // which means given minDist, the nearest subtree cant find
+                // closer node and the right tree has possible minimum larger
+                // than the minDist, which means there will be no solutions
+                // in this whole tree
+                return null;
+            }
             Point2D pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist);
             if (pLeftTemp != null) {
                 minDist = pLeftTemp.distanceSquaredTo(p);
                 nearNeighbor = pLeftTemp;
             }
-            double selfDist = nd.pt.distanceSquaredTo(p);
+
             if (selfDist <= minDist) {
                 nearNeighbor = nd.pt;
             }
@@ -419,20 +444,20 @@ public class KdTree {
             Point2D pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist);
             if (pLeftTemp != null) {
                 double tempDist = pLeftTemp.distanceSquaredTo(p);
-                double possibleDist = nd.possibleMinDist(p);
                 if (tempDist < possibleDist) {
                     return pLeftTemp;
                 }
                 minDist = tempDist;
                 nearNeighbor = pLeftTemp;
             }
-
+            else if (possibleDist > minDist) {
+                return null;
+            }
             Point2D pRightTemp = nodeNearPoint(nd.rightNode, p, minDist);
             if (pRightTemp != null) {
                 minDist = pRightTemp.distanceSquaredTo(p);
                 nearNeighbor = pRightTemp;
             }
-            double selfDist = nd.pt.distanceSquaredTo(p);
             if (selfDist <= minDist) {
                 nearNeighbor = nd.pt;
             }
