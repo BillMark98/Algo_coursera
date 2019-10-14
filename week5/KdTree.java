@@ -95,7 +95,7 @@ public class KdTree {
         }
         double minDist = root.pt.distanceSquaredTo(p);
         // double minDist = Double.POSITIVE_INFINITY;
-        Point2D nearNeighbor = nodeNearPoint(root, p, minDist);
+        Point2D nearNeighbor = nodeNearPoint(root, p, minDist, new RectHV(0, 0, 1, 1));
         return new Point2D(nearNeighbor.x(), nearNeighbor.y());
     }
 
@@ -159,6 +159,14 @@ public class KdTree {
 
         // should return (0.226,0.577)
         Point2D query = new Point2D(0.226, 0.581);
+
+
+        // should return (0.32,0.708)
+        // Point2D query = new Point2D(0.55, 0.73);
+
+        // should return (0.499,0.208)
+        // Point2D query = new Point2D(0.59, 0.2);
+
         // StdDraw.setPenColor(StdDraw.BOOK_LIGHT_BLUE);
         // StdDraw.setPenRadius(0.04);
         // query.draw();
@@ -315,6 +323,20 @@ public class KdTree {
                 return diff * diff;
             }
         }
+
+        public double possibleMinDist(Point2D p, RectHV rect) {
+            // assume p is not null
+            // if (turns == 0) {
+            //
+            //     double diff = pt.x() - p.x();
+            //     return diff * diff;
+            // }
+            // else {
+            //     double diff = pt.y() - p.y();
+            //     return diff * diff;
+            // }
+            return rect.distanceSquaredTo(p);
+        }
     }
 
     private Node nodeInsert(Node nd, Point2D p, int turnRoot) {
@@ -397,21 +419,43 @@ public class KdTree {
 
     }
 
-    private Point2D nodeNearPoint(Node nd, Point2D p, double minDist) {
+    private Point2D nodeNearPoint(Node nd, Point2D p, double minDist, RectHV rect) {
         if (nd == null) {
             return null;
         }
-        double possibleDist = nd.possibleMinDist(p);
+        // double possibleDist = nd.possibleMinDist(p, rect);
         double selfDist = nd.pt.distanceSquaredTo(p);
         // minDist means the closest square Dist found so far
         int pos = nd.comparePoint(p);
+        double px = nd.pt.x();
+        double py = nd.pt.y();
+        double rxmin = rect.xmin();
+        double rxmax = rect.xmax();
+        double rymin = rect.ymin();
+        double rymax = rect.ymax();
         Point2D nearNeighbor = null;
         if (selfDist <= minDist) {
             minDist = selfDist;
             nearNeighbor = nd.pt;
         }
         if (pos <= 0) {
-            Point2D pRightTemp = nodeNearPoint(nd.rightNode, p, minDist);
+            double possibleDist;
+            Point2D pRightTemp = null;
+            if (nd.turns == 0) {
+                pRightTemp = nodeNearPoint(nd.rightNode, p, minDist,
+                                           new RectHV(px, rymin, rxmax,
+                                                      rymax));
+                possibleDist = nd
+                        .possibleMinDist(p, new RectHV(rxmin, rymin, px, rymax));
+
+            }
+            else {
+                pRightTemp = nodeNearPoint(nd.rightNode, p, minDist,
+                                           new RectHV(rxmin, py, rxmax,
+                                                      rymax));
+                possibleDist = nd.possibleMinDist(p, new RectHV(rxmin, rymin, rxmax, py));
+            }
+
             if (pRightTemp != null) {
                 double tempDist = pRightTemp.distanceSquaredTo(p);
                 if (tempDist < possibleDist) {
@@ -429,7 +473,15 @@ public class KdTree {
                 // in this whole tree
                 return null;
             }
-            Point2D pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist);
+            Point2D pLeftTemp = null;
+            if (nd.turns == 0) {
+                pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist,
+                                          new RectHV(rxmin, rymin, px, rymax));
+            }
+            else {
+                pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist,
+                                          new RectHV(rxmin, rymin, rxmax, py));
+            }
             if (pLeftTemp != null) {
                 minDist = pLeftTemp.distanceSquaredTo(p);
                 nearNeighbor = pLeftTemp;
@@ -441,7 +493,18 @@ public class KdTree {
             return nearNeighbor;
         }
         else {
-            Point2D pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist);
+            Point2D pLeftTemp;
+            double possibleDist;
+            if (nd.turns == 0) {
+                pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist,
+                                          new RectHV(rxmin, rymin, px, rymax));
+                possibleDist = nd.possibleMinDist(p, new RectHV(px, rymin, rxmax, rymax));
+            }
+            else {
+                pLeftTemp = nodeNearPoint(nd.leftNode, p, minDist,
+                                          new RectHV(rxmin, rymin, rxmax, py));
+                possibleDist = nd.possibleMinDist(p, new RectHV(rxmin, py, rxmax, rymax));
+            }
             if (pLeftTemp != null) {
                 double tempDist = pLeftTemp.distanceSquaredTo(p);
                 if (tempDist < possibleDist) {
@@ -453,7 +516,16 @@ public class KdTree {
             else if (possibleDist > minDist) {
                 return null;
             }
-            Point2D pRightTemp = nodeNearPoint(nd.rightNode, p, minDist);
+
+            Point2D pRightTemp;
+            if (nd.turns == 0) {
+                pRightTemp = nodeNearPoint(nd.rightNode, p, minDist,
+                                           new RectHV(px, rymin, rxmax, rymax));
+            }
+            else {
+                pRightTemp = nodeNearPoint(nd.rightNode, p, minDist,
+                                           new RectHV(rxmin, py, rxmax, rymax));
+            }
             if (pRightTemp != null) {
                 minDist = pRightTemp.distanceSquaredTo(p);
                 nearNeighbor = pRightTemp;
