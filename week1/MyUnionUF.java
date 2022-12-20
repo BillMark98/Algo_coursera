@@ -5,13 +5,14 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.StdOut;
+import java.util.Random;
 
 public class MyUnionUF {
     private int[] id;
     private int[] sz;
     private int count;
     // saves the largest element to which the element is connected
-    private int[] largestElement;
+    // private int[] largestElement;
 
     public MyUnionUF(int N) {
         count = N;
@@ -21,12 +22,12 @@ public class MyUnionUF {
         }
         sz = new int[N];
         for (int i = 0; i < N; i++) {
-            sz[i] = i;
+            sz[i] = 1; // ? sz[i] = i;?
         }
-        largestElement = new int[N];
-        for (int i = 0; i < N; i++) {
-            largestElement[i] = i;
-        }
+        // largestElement = new int[N];
+        // for (int i = 0; i < N; i++) {
+        //     largestElement[i] = i;
+        // }
     }
 
     public int count() {
@@ -44,29 +45,30 @@ public class MyUnionUF {
         return p;
     }
 
-    // find the largest element to which p is connected
-    public int findLarge(int p) {
-        return largestElement[find(p)];
-    }
+    // // find the largest element to which p is connected
+    // public int findLarge(int p) {
+    //     return largestElement[find(p)];
+    // }
 
     public void union(int p, int q) {
         int i = find(p);
         int j = find(q);
         if (i == j) return;
 
+        // random version
         if (sz[i] < sz[j]) {
             id[i] = j;
             sz[j] += sz[i];
-            if (largestElement[i] > largestElement[j]) {
-                largestElement[j] = largestElement[i];
-            }
+            // if (largestElement[i] > largestElement[j]) {
+            //     largestElement[j] = largestElement[i];
+            // }
         }
         else {
             id[j] = i;
             sz[i] += sz[j];
-            if (largestElement[j] > largestElement[i]) {
-                largestElement[i] = largestElement[j];
-            }
+            // if (largestElement[j] > largestElement[i]) {
+            //     largestElement[i] = largestElement[j];
+            // }
         }
 
         count--;

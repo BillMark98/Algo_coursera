@@ -23,13 +23,14 @@ public class PercolationStats {
             Percolation percolate = new Percolation(n);
             while (!percolate.percolates()) {
                 // generate a random from 0 to n^2 - 1
-                int index = StdRandom.uniform(0, n * n);
+                // int index = StdRandom.uniform(0, n * n);  // uniform deprecated
+                int index = StdRandom.uniformInt(0, n * n);
                 // convert it to (row, col) coordinate
                 int col = index % n + 1;
                 int row = index / n + 1;
                 // generate a new random point until it is closed
                 while (percolate.isOpen(row, col)) {
-                    index = StdRandom.uniform(0, n * n);
+                    index = StdRandom.uniformInt(0, n * n);
                     col = index % n + 1;
                     row = index / n + 1;
                 }

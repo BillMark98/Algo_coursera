@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch MyUnionUFRandom",
+            "request": "launch",
+            "mainClass": "myunionUF.MyUnionUFRandom",
+            "projectName": "week1_f051863c"
+        },
+        {
+            "type": "java",
+            "name": "Launch MyUnionUFRandom",
+            "request": "launch",
+            "mainClass": "MyUnionUFRandom",
+            "projectName": "week1_f051863c"
+        },
+        {
+            "type": "java",
+            "name": "Launch PercolationVisualizer",
+            "request": "launch",
+            "mainClass": "PercolationVisualizer",
+            "projectName": "week1_f051863c",
+            "args": [
+                // "input3_2.txt"
+                "jerry47.txt"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Launch Percolation",
+            "request": "launch",
+            "mainClass": "Percolation",
+            "projectName": "week1_f051863c"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
+}
