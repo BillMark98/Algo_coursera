@@ -95,3 +95,5 @@ example `launch.json` file
 
 note in the left task bar, where the `algs4.jar` is located, the `Run | Debug` button in the editor
 is located and how does the command line look like
+
+* [upload jar](https://stackoverflow.com/questions/16547301/best-way-to-upload-deploy-jar-files-in-github)
